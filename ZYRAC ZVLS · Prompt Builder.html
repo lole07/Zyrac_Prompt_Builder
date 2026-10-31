@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZYRAC ZVLS · Prompt Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--panel:#141416;--line:#2a2a2e;--tx:#f4f2ef;--mut:#9a9aa2;--red:#e1221b;--blue:#2f6bff;--on:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1efec;--panel:#fff;--line:#d9d5cf;--tx:#141416;--mut:#66666e}}
+:root[data-theme="dark"]{--bg:#0a0a0b;--panel:#141416;--line:#2a2a2e;--tx:#f4f2ef;--mut:#9a9aa2}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font:500 15px/1.45 Barlow,system-ui,sans-serif}
+h1,h2{font-family:Anton,Impact,'Arial Narrow',sans-serif;font-weight:400;text-transform:uppercase;margin:0;letter-spacing:.01em}
+header{padding:28px 20px 8px;max-width:1200px;margin:0 auto}
+h1{font-size:clamp(38px,7vw,68px);line-height:.95}
+h1 em{font-style:normal;color:var(--red)}
+header p{color:var(--mut);max-width:62ch;margin:10px 0 0}
+main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px;max-width:1200px;margin:0 auto;padding:16px 20px 60px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+section.g{border-top:2px solid var(--red);padding:14px 0 6px}
+h2{font-size:20px;margin-bottom:4px}
+.hint{color:var(--mut);font-size:13px;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:block;padding:7px 11px;border:1px solid var(--line);background:var(--panel);border-radius:3px;font-size:13.5px}
+.chip b{font-family:Anton,Impact,sans-serif;font-weight:400;color:var(--red);margin-right:6px;letter-spacing:.03em}
+.chip input:checked+span{background:var(--red);border-color:var(--red);color:var(--on)}
+.chip input:checked+span b{color:var(--on)}
+.chip input:focus-visible+span{outline:2px solid var(--blue);outline-offset:2px}
+textarea,select,input[type=text]{width:100%;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:3px;padding:9px 10px;font:inherit}
+textarea{min-height:68px;resize:vertical}
+label.f{display:block;font-size:13px;color:var(--mut);margin:8px 0 4px}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.sw{display:flex;gap:8px;align-items:center;font-size:14px}
+aside{position:sticky;top:12px;align-self:start;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;max-height:calc(100vh - 24px);overflow:auto}
+@media(max-width:860px){aside{position:static;max-height:none}}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.tabs button{background:transparent;color:var(--mut);border:1px solid var(--line);padding:6px 10px;border-radius:3px;font:inherit;font-size:13px;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.recipe{font:12.5px/1.6 ui-monospace,Menlo,monospace;color:var(--red);word-break:break-word;margin:0 0 10px}
+.out{background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:10px;font-size:13.5px;white-space:pre-wrap;word-break:break-word;min-height:60px;margin:0 0 8px;max-height:300px;overflow:auto}
+.lab{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:13px;color:var(--mut)}
+.btn{background:var(--red);color:var(--on);border:0;padding:7px 14px;border-radius:3px;font:600 13px Barlow,sans-serif;cursor:pointer}
+.btn.alt{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.note{font-size:12.5px;color:var(--mut);border-left:3px solid var(--blue);padding-left:9px;margin:10px 0 0}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ico{width:100%;height:auto;background:var(--bg);border-radius:3px;display:block;margin-bottom:6px}
+.chip small{display:block;font-size:12px;color:var(--mut);font-weight:400;margin-top:3px;line-height:1.35}
+.chips.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.cards .chip span{height:100%}
+.cards .chip input:checked+span{background:var(--panel);color:var(--tx);box-shadow:inset 0 0 0 2px var(--red)}
+.cards .chip input:checked+span b{color:var(--red)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;margin:6px 0}
+.pb{background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:3px;padding:6px;font:inherit;font-size:12px;cursor:pointer;text-align:left}
+.pb svg{width:100%;height:64px;display:block;background:var(--bg);border-radius:3px;margin-bottom:4px}
+.pb[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--red)}
+.pb i{display:block;font-style:normal;color:var(--red);font-size:11px}
+.note a{color:var(--blue)}
+details.gd{max-width:1200px;margin:8px auto 0;padding:0 20px}
+details.gd summary{cursor:pointer;font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:22px;border-top:2px solid var(--red);padding:12px 0}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding-bottom:10px}
+.gc{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px}
+.gc h3{margin:0 0 6px;font-size:15px}
+.gc p{margin:6px 0 0;font-size:13.5px;color:var(--mut)}
+.gi{display:flex;gap:4px}.gi svg{flex:1;min-width:0}
+#ctl{counter-reset:s}
+section.g h2::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:24px;height:24px;background:var(--red);color:#fff;font-size:14px;border-radius:50%;margin-right:8px;vertical-align:2px}
+.pv{position:relative;width:100%;max-width:340px;margin:0 auto 12px;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#0a0a0b}
+.pv svg{position:absolute;inset:0;width:100%;height:100%}
+.pv::after{content:'';position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,#000b)}
+.pvt{position:absolute;left:12px;bottom:12px;right:12px;z-index:2;font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-size:24px;line-height:1;color:#fff}
+.pvt small{display:block;font:500 11px Barlow,sans-serif;color:#d0d0d6;text-transform:none;margin-top:5px;line-height:1.3}
+.fab{display:none}
+@media(max-width:860px){.fab{display:block;position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;box-shadow:0 4px 14px #0008;padding:11px 18px;font-size:14px}}
+:root{--gold:#c9a96a}
+body{background:radial-gradient(900px 420px at 90% -5%,#e1221b26,transparent 65%),radial-gradient(700px 400px at -5% 30%,#2f6bff14,transparent 60%),var(--bg);background-attachment:fixed}
+header{padding-top:40px}header p{font-size:16px}
+.qn{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:flex;gap:6px;overflow-x:auto;padding:10px 20px;max-width:1200px;margin:0 auto;background:linear-gradient(var(--bg),#0000);backdrop-filter:blur(8px)}
+.qn button,.pf button{flex:none;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:20px;padding:5px 12px;font:600 12px Barlow,sans-serif;letter-spacing:.04em;cursor:pointer;transition:.2s}
+.qn button:hover,.pf button:hover{border-color:var(--gold);color:var(--gold)}
+.pf{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}.pf button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#111}
+.pb[hidden]{display:none}
+section.g{background:linear-gradient(180deg,#ffffff0a,#ffffff03);border:1px solid var(--line);border-top:2px solid var(--red);border-radius:10px;padding:18px;margin-bottom:14px;scroll-margin-top:60px}
+section.g h2{font-size:22px;letter-spacing:.03em}
+section.g h2::before{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.chip span{border-radius:8px;transition:transform .2s,border-color .2s}
+.chip:hover span{transform:translateY(-2px);border-color:var(--gold)}
+.chips.cards{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ico{border:1px solid var(--line)}
+aside{border-radius:12px;border-color:#c9a96a66;box-shadow:0 20px 60px #0008}
+.btn{border-radius:6px;letter-spacing:.04em;transition:.2s}.btn:hover{filter:brightness(1.15)}
+.pv::before{content:'ZYRAC DANCE';position:absolute;top:12px;left:12px;z-index:2;font:400 12px Anton,Impact,sans-serif;letter-spacing:.14em;color:#fff;border-bottom:2px solid var(--red);padding-bottom:3px}
+.pre{margin:0 0 16px}.pre h2{font-size:22px;margin-bottom:8px}
+.ps{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px}
+.ps button{text-align:left;background:var(--panel);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:10px;font:400 15px Anton,Impact,sans-serif;text-transform:uppercase;cursor:pointer;line-height:1.05;min-height:62px;transition:.2s}
+.ps button i{display:block;font:500 11px Barlow,sans-serif;color:var(--gold);margin-bottom:4px}
+.ps button:hover{border-color:var(--red);transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.gdw{position:fixed;inset:0;z-index:20;background:#0007;display:flex;align-items:flex-end}.gdw[hidden]{display:none}
+.gdp{background:var(--panel);border:1px solid var(--gold);border-radius:12px;margin:14px;width:min(600px,calc(100% - 28px));max-height:80vh;overflow:auto;padding:14px;box-shadow:0 20px 60px #000a}
+.gdh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:Anton,Impact,sans-serif;font-size:20px;text-transform:uppercase}.gdh b{font-weight:400}
+.gfab{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--panel);color:var(--gold);border:1px solid var(--gold);padding:11px 16px;font-size:14px;box-shadow:0 4px 14px #0008}
+.gh{grid-column:1/-1;font:600 13px Barlow,sans-serif;color:var(--gold);margin:8px 0 0;padding-bottom:4px;border-bottom:1px solid var(--line)}.gh:first-child{margin-top:0}
+</style>
+</head>
+<body>
+<header>
+<h1>ZYRAC <em>ZVLS</em><br>Prompt Builder</h1>
+<p>Elige los códigos del Visual Language System, escribe solo el sujeto y la pose, y copia el prompt ya compilado para tu IA. El estilo nunca cambia; cambias la escena.</p>
+</header>
+<div class='gdw' id='gd' hidden><div class='gdp'><div class='gdh'><b>Guía rápida para no fotógrafos</b><button id='gx' class='btn alt'>Cerrar</button></div><div class='gg'>
+<div class='gc'><h3>Ángulo de cámara</h3><div class='gi' data-i='cam:C01,cam:C02,cam:C03'></div><p>Desde dónde miras al bailarín. Con la cámara baja mirando hacia arriba, la persona se ve gigante y poderosa. ZYRAC casi nunca usa la altura de los ojos. Izquierda a derecha: normal, bajo, muy bajo.</p></div>
+<div class='gc'><h3>Lente en mm</h3><p>Qué tan abierta ve la cámara. Pocos mm (24) es muy amplio: exagera piernas y tenis cercanos y da drama. Muchos mm (85 o más) aplana y se ve como retrato suave. ZYRAC usa 24 a 35 mm.</p></div>
+<div class='gc'><h3>Apertura f/2.8</h3><p>Controla cuánto se desenfoca el fondo. Número bajo igual a fondo borroso y bailarín bien nítido.</p></div>
+<div class='gc'><h3>Velocidad 1/1000</h3><p>Congela el movimiento. Por eso los saltos, el cabello y la ropa se ven detenidos en el aire.</p></div>
+<div class='gc'><h3>Luz clave, contraluz y rim</h3><div class='gi' data-i='lig:L01,lig:L03'></div><p>Vista desde arriba (el triángulo es la cámara). Clave: luz blanca al frente. Contraluz: luces rojas o azules detrás. Rim: borde brillante que recorta pelo, hombros y piernas.</p></div>
+<div class='gc'><h3>Tamaño del plano</h3><div class='gi' data-i='cam:C08,cam:C07,cam:C09'></div><p>Plano medio: de la cintura arriba. Close-up: solo la cara. Detalle: manos, muñecas o tenis. Cada serie ZYRAC mezcla planos generales, medios, close-ups y detalles para que el feed no se vea repetido.</p></div>
+<div class='gc'><h3>Humo o haze</h3><p>Partículas en el aire que vuelven visibles los rayos de luz. Sin humo la imagen se ve plana.</p></div>
+<div class='gc'><h3>Composición</h3><div class='gi' data-i='com:COMP01,com:COMP02,com:COMP05'></div><p>Cómo se acomoda el cuerpo en el cuadro. Diagonales, triángulos y piernas hacia la cámara dan movimiento.</p></div>
+<div class='gc'><h3>Cambiar la pose de una foto</h3><p>1. Describe la pose con texto (galería de poses abajo). 2. Sube una segunda foto solo como referencia de pose y marca la casilla. 3. En SDXL o Flux avanzado usa ControlNet OpenPose con el esqueleto de la pose.</p></div>
+</div></div></div>
+<main>
+<div id="ctl">
+<div class='pre'><h2>Arranca con un look de la serie Stage Presence</h2><div class='ps' id='ps'></div></div>
+<section class="g"><h2>Modo</h2>
+<p class="hint">Con foto de referencia la IA conserva la cara y el cuerpo de tu bailarín y solo cambia estilo, luz y pose.</p>
+<div class="chips" id="mode"></div></section>
+<section class="g"><h2>Sujeto y pose</h2>
+<label class="f" for="subj">Sujeto</label>
+<textarea id="subj" placeholder="Ej: bailarina de hip hop, cabello largo con trenzas"></textarea>
+<label class='f'>Galería de poses (clic para usar)</label><div class='pg' id='pg'></div><p class='note' id='pinfo'>Elige una pose y te muestro dónde buscar fotos de referencia reales.</p>
+<label class="f" for="pose">Pose / acción</label>
+<textarea id="pose" placeholder="Ej: freeze de breakdance apoyada sobre una mano, piernas abiertas hacia cámara"></textarea>
+<label class='sw' style='margin-top:8px'><input type='checkbox' id='pref'> Tengo una segunda foto solo como referencia de pose</label>
+<label class="f" for="extra">Detalle extra (opcional)</label>
+<input type="text" id="extra" placeholder="Ej: bandana roja, gafas de sol oscuras">
+</section>
+<section class='g'><h2>Ropa</h2><p class='hint'>¿Qué hacemos con la ropa? Mantenerla conserva el outfit real de tu bailarín (solo con foto de referencia).</p><div class='chips' id='wm'></div><div id='warbox'><label class='f'>Elige el look nuevo</label><div class='chips' id='war'></div></div></section>
+<section class='g'><h2>Accesorios</h2><p class='hint'>Lo que marca el look ZYRAC: bandanas, gafas, aros y gorras. Marca los que quieras.</p><div class='chips' id='accs'></div></section>
+<section class="g"><h2>Cámara</h2><div class="chips" id="cam"></div></section>
+<section class="g"><h2>Iluminación</h2><div class="chips" id="lig"></div></section>
+<section class="g"><h2>Paleta</h2><div class="chips" id="pal"></div></section>
+<section class="g"><h2>Composición</h2><div class="chips" id="com"></div></section>
+<section class="g"><h2>Movimiento</h2><div class="chips" id="mov"></div></section>
+<section class="g"><h2>Emoción</h2><div class="chips" id="emo"></div></section>
+<section class='g'><h2>Fondo</h2><p class='hint'>Escenario completo con luces, fondo plano de color para estudio, o sin fondo para recortar el bailarín.</p><div class='chips' id='bg'></div><div id='bgbox' hidden><label class='f'>Color del fondo plano</label><div class='chips' id='bgc'></div></div></section>
+<section class="g" id="scebox"><h2>Escenario</h2><div class="chips" id="sce"></div></section>
+
+<section class="g"><h2>Formato</h2><div class="chips" id="asp"></div>
+<div class="row" style="margin-top:12px"><label class="sw"><input type="checkbox" id="ovl"> Pedir título gráfico dentro de la imagen</label></div>
+<p class="hint">Recomendado dejarlo apagado: las IAs deforman logos y letras. Pon el logo de la corona y el título en Canva o Photoshop.</p>
+<div id="ovbox" hidden><label class="f" for="ovt">Texto del título</label><input type="text" id="ovt" value="STAGE PRESENCE"></div>
+</section>
+</div>
+<aside>
+<div class='pv' id='pv'><svg id='pvs' viewBox='0 0 60 60' preserveAspectRatio='xMidYMax meet'></svg><div class='pvt' id='pvt'></div></div>
+<div class="tabs" id="eng"></div>
+<p class="recipe" id="rec"></p>
+<div class="lab"><span>Prompt</span><button class="btn" data-copy="pos">Copiar</button></div>
+<pre class="out" id="pos"></pre>
+<div class="lab"><span>Negative prompt</span><button class="btn alt" data-copy="neg">Copiar</button></div>
+<pre class="out" id="neg"></pre>
+<p class="note" id="enote"></p>
+<div class="bar"><button class="btn alt" id="rnd">Receta aleatoria</button><button class="btn alt" id="rst">Reiniciar</button><button class="btn alt" id="saveb">Guardar receta</button></div>
+<div id="saved" class="note" hidden></div>
+</aside>
+</main>
+<script>
+const D={
+mode:[["T2I","Solo texto","Generar desde cero"],["REF","Foto de referencia","Conservar identidad del bailarín"]],
+cam:[["C01","Hero Shot","frontal hero shot at chest-to-low height, 35mm lens, strong presence"],["C02","Low Angle","low-angle shot, 24mm wide lens, exaggerated perspective, subject looming"],["C03","Extreme Low Angle","extreme low-angle shot from floor level, 24mm wide lens, legs and sneakers pushed toward camera, epic scale"],["C04","Dutch Angle","slight dutch angle tilt, 28mm lens, strong diagonal energy"],["C05","Close Portrait","close portrait, 35mm lens, face and shoulders, sharp eyes, shallow depth of field"],["C06","Wide Hero","wide hero shot, 24mm lens, dancer small against an enormous stage, deep environment"]],
+lig:[["L01","Stage Red","hard white key light, intense red LED backlights, red rim light outlining hair shoulders and legs, volumetric smoke, dark background, minimal fill"],["L02","Stage Blue","hard white key light, electric blue LED backlights, blue rim light, volumetric smoke, dark background, minimal fill"],["L03","Mixed Arena","red and blue arena LED lights crossing, concert haze, visible light beams, crisp white key"],["L04","Backstage","warm tungsten bulb vanity lights, flight cases and metal racks, medium contrast, red accent glow, rim light"],["L05","Spotlight","single hard spotlight from above-front, everything else in deep black, subtle red rim, drifting haze"]],
+pal:[["P01","Negro · Blanco · Rojo","deep black, clean white and saturated red palette"],["P02","Negro · Azul · Blanco","deep black, electric blue and clean white palette"],["P03","Todo negro","all-black monochrome wardrobe with red light accents only"],["P04","Blanco · Rojo","white and red dominant palette against deep black background"]],
+com:[["COMP01","Diagonal","strong diagonal composition"],["COMP02","Triángulo","triangular group composition"],["COMP03","Centro heroico","centered heroic framing, not perfectly symmetrical"],["COMP04","Espacio negativo","generous negative space in dark areas"],["COMP05","Perspectiva extrema","extreme foreshortening, limbs reaching toward camera"]],
+mov:[["M01","Freeze","frozen mid-motion, razor sharp"],["M02","Salto","mid-air jump, peak of the movement"],["M03","Giro","spinning motion, hair and fabric flying"],["M04","Impacto","landing impact, explosive energy"],["M05","Caminando","confident walk toward camera"],["M06","Posando","power pose, about to move"]],
+emo:[["E01","Dominante","dominant, in control of the stage"],["E02","Concentrado","intensely focused"],["E03","Desafiante","defiant direct stare, no smile"],["E04","Victoria","triumphant, victorious energy"],["E05","Silencio","calm, quiet confidence before the performance"]],
+sce:[["S01","Arena","packed arena with LED walls and stage lights"],["S02","Escenario","concert stage with LED bars, spotlights and smoke"],["S03","Backstage","backstage with flight cases, metal racks and bulb mirrors"],["S04","Warehouse","industrial warehouse with metal trusses and fluorescent tubes"],["S05","Studio","premium dance studio with dark walls and spotlights"],["S06","Industrial","raw industrial space, concrete and steel, red light"]],
+war:[["W01","Streetwear clásico","oversized black and white varsity jacket, baggy black cargo pants, white chunky sneakers, red bandana"],["W02","Todo negro","oversized black nylon jacket, baggy black cargo pants, black cap, white sneakers"],["W03","Blanco y rojo","oversized white jacket with red accents, light baggy cargo pants, red details"],["W04","Dancewear","black crop top, baggy cargo pants, white sneakers, bandana, small hoop earrings"]],
+asp:[["4:5","4:5 Feed"],["9:16","9:16 Story"],["1:1","1:1"],["16:9","16:9"]]
+};
+const ids={mode:"mode",cam:"cam",lig:"lig",pal:"pal",com:"com",mov:"mov",emo:"emo",sce:"sce",war:"war",asp:"asp"};
+const DEF={mode:"T2I",cam:"C03",lig:"L01",pal:"P01",com:"COMP05",mov:"M01",emo:"E03",sce:"S02",war:"W01",asp:"4:5"};
+const ENG=[["uni","Universal"],["mj","Midjourney"],["flux","Flux"],["sdxl","SDXL"],["gpt","ChatGPT / Gemini"],["ff","Firefly / Imagen"]];
+const ENOTE={uni:"Bloque de estilo + escena. Sirve en cualquier IA; si admite negative prompt, úsalo aparte.",mj:"Pega todo en una sola línea. Para foto de referencia sube la imagen y reemplaza <URL_FOTO> (--oref en v7, --cref en v6).",flux:"Flux no usa negative prompt: el prompt ya lleva las exclusiones en positivo. Para identidad usa Flux Kontext o un LoRA del bailarín.",sdxl:"Pega cada campo por separado. Para identidad usa IP-Adapter FaceID o un LoRA del bailarín.",gpt:"Sube la foto del bailarín junto con este texto. Gemini y ChatGPT entienden bien las instrucciones de edición y las exclusiones en lenguaje natural.",ff:"En Firefly pega las exclusiones en «Excluir contenido». En Imagen usa el prompt tal cual."};
+const DNA0="premium urban performance editorial photography, cinematic commercial quality, international sportswear campaign aesthetic, dramatic high-contrast lighting, strong rim lighting, deep blacks, vibrant saturated reds, cool shadows, warm natural skin tones, volumetric haze, visible light beams, premium concert atmosphere, realistic photography, ultra-sharp details, shallow depth of field around f/2.8, confident athletic attitude, luxury sports fashion, realistic skin texture, commercial retouching, cohesive visual identity, no AI artifacts";
+const NEG="low quality, blurry, flat lighting, overexposed, underexposed, washed colors, pastel colors, weak contrast, amateur photography, cellphone photo, selfie, tourist photo, stock photography, HDR look, CGI, 3D render, illustration, anime, cartoon, plastic skin, unrealistic anatomy, bad hands, duplicated limbs, extra fingers, distorted face, low resolution, noisy image, compression artifacts, oversaturated skin, artificial smile, poor composition";
+const REF0="Use the attached photo as the identity reference: keep the exact face, hair, skin tone and body proportions of this person. Change only the style, lighting, wardrobe, pose and scene as described.";
+let DNA=DNA0,REF=REF0;const S={...DEF,eng:"uni"};
+const $=i=>document.getElementById(i);
+const g=(k,c)=>D[k].find(x=>x[0]===c);
+function build(){
+ for(const k in ids){const el=$(ids[k]);el.innerHTML="";el.classList.toggle('cards','cam lig com pal wm war mode bg bgc'.includes(k));D[k].forEach(it=>{
+  const l=document.createElement("label");l.className="chip";
+  l.innerHTML='<input type="radio" name="'+k+'" value="'+it[0]+'"><span>'+ico(k,it[0])+(k==="asp"||k==="mode"||k==="wm"||k==="bg"||k==="bgc"?"":'<b>'+it[0]+'</b>')+it[1]+(ESD[it[0]]?'<small>'+ESD[it[0]]+'</small>':'')+'</span>';
+  l.title=it[2]||"";const inp=l.querySelector("input");inp.checked=S[k]===it[0];
+  inp.addEventListener("change",()=>{S[k]=it[0];render()});el.appendChild(l)})}
+ const t=$("eng");t.innerHTML="";ENG.forEach(e=>{const b=document.createElement("button");b.textContent=e[1];b.dataset.e=e[0];b.onclick=()=>{S.eng=e[0];render()};t.appendChild(b)});
+}
+function parts(){
+ const subj=$("subj").value.trim()||"a hip hop dancer",pose=$("pose").value.trim()||"mid-motion dance pose",ex=[$("extra").value.trim(),...[...document.querySelectorAll('.acc:checked')].map(x=>x.dataset.en)].filter(Boolean).join(', ');
+ const ov=$("ovl").checked,ovt=$("ovt").value.trim();
+ const scene=subj+", "+pose+(ex?", "+ex:"");
+ const look=[g("cam",S.cam)[2],g("lig",S.lig)[2],g("pal",S.pal)[2],g("com",S.com)[2],g("mov",S.mov)[2],g("emo",S.emo)[2]].join(", ");
+ const bgc=g('bgc',S.bgc),loc=S.bg==='flat'?'a studio, against a seamless flat '+bgc[2]+' backdrop, plain background with no environment, no smoke, no props':S.bg==='cut'?'a studio, isolated on a plain pure white background, no floor, no shadow on the background, clean sharp edges around hair and clothes, cutout-ready':g("sce",S.sce)[2],R=S.mode==="REF",wear=R&&S.wm==="keep"?"the exact same outfit as in the reference photo, unchanged (same garments, colors and details)":R&&S.wm==="recolor"?"the same garments as in the reference photo, same cut and details, recolored in black, white and red streetwear tones":g("war",S.war)[2];
+ const ovtxt=ov?"Include a bold condensed white uppercase sans-serif title \""+ovt+"\" at the bottom-left with a short white underline, and a small numbered tag at the top-left.":"";
+ let neg=NEG+(ov?"":", text, logo, watermark")+(S.bg==='scene'?'':', busy background, environment, crowd, smoke');
+ return {scene,look:S.bg==='scene'?look:look.replace(/volumetric smoke, |dark background, |concert haze, |visible light beams, |, haze|, red smoke/g,''),loc,wear,ovtxt,neg,ov};
+}
+function compile(){DNA=S.bg==='scene'?DNA0:DNA0.replace('volumetric haze, visible light beams, premium concert atmosphere, ','');REF=(S.mode==='REF'&&S.wm==='keep'?REF0.replace('wardrobe, ',''):REF0)+($('pref').checked?' The second attached image is a pose reference only: copy its body position, not its person, clothing or background.':'');
+ const p=parts(),ar=S.asp,e=S.eng,ref=S.mode==="REF";
+ let pos="",neg=p.neg;
+ const body=p.scene+", wearing "+p.wear+", in "+p.loc+". "+p.look+". "+DNA+".";
+ if(e==="uni")pos=(ref?REF+"\n\n":"")+body+(p.ovtxt?" "+p.ovtxt:"")+" Aspect ratio "+ar+".";
+ if(e==="mj"){pos=p.scene+", wearing "+p.wear+", in "+p.loc+", "+p.look+", "+DNA+(p.ovtxt?", "+p.ovtxt:"")+(ref?" --oref <URL_FOTO> --ow 200":"")+" --ar "+ar+" --style raw --stylize 200 --no "+neg;neg="(ya incluido en --no)"}
+ if(e==="flux"){pos=(ref?REF+" ":"")+"A photograph of "+p.scene+", wearing "+p.wear+", in "+p.loc+". "+p.look+". "+DNA+". Sharp, realistic skin, natural hands, rich blacks and saturated reds, no text, no cartoon look."+(p.ovtxt?" "+p.ovtxt:"")+" Aspect ratio "+ar+".";neg="(Flux no usa negative prompt)"}
+ if(e==="sdxl"){pos=(ref?"(same person as reference:1.2), ":"")+"RAW photo, "+p.scene+", wearing "+p.wear+", in "+p.loc+", "+p.look+", (deep blacks:1.2), (saturated red rim light:1.2), "+DNA+", "+ar+" aspect ratio"}
+ if(e==="gpt"){pos=(ref?"Edit this photo. "+REF+"\n\n":"Create a photograph.\n\n")+"Scene: "+p.scene+", in "+p.loc+".\nWardrobe: "+p.wear+".\nCamera and light: "+p.look+".\nStyle: "+DNA+".\nFormat: "+ar+" aspect ratio."+(p.ovtxt?"\n"+p.ovtxt:"\nDo not add any text, logos or watermarks.")+"\nAvoid: "+NEG.split(", ").slice(0,14).join(", ")+".";neg="(incluido como «Avoid» en el prompt)"}
+ if(e==="ff"){pos=(ref?"Same person as reference. ":"")+p.scene+", wearing "+p.wear+", in "+p.loc+". "+p.look+". "+DNA+"."+(p.ovtxt?" "+p.ovtxt:"");}
+ return {pos,neg};
+}
+function render(){ui();
+ for(const k in ids)document.querySelectorAll('input[name="'+k+'"]').forEach(i=>i.checked=S[k]===i.value);
+ $("ovbox").hidden=!$("ovl").checked;
+ document.querySelectorAll("#eng button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===S.eng));
+ const o=compile();$("pos").textContent=o.pos;$("neg").textContent=o.neg;$("enote").textContent=ENOTE[S.eng]+(S.bg==='cut'?' Sin fondo real: ChatGPT puede entregar PNG transparente si se lo pides; en las demás IAs genera sobre blanco y quítalo con remove.bg o Photoshop.':S.bg==='flat'&&S.bgc==='BV'?' El verde sirve para recortar después; cuidado con el reflejo verde en bordes y cabello.':'');
+ $("rec").textContent="Version=ZVLS_1.0 · Mode="+S.mode+" · Camera="+S.cam+" · Lighting="+S.lig+" · Palette="+S.pal+" · Composition="+S.com+" · Movement="+S.mov+" · Emotion="+S.emo+" · Scenario="+S.sce+" · Wardrobe="+S.war+" · AR="+S.asp+" · Background="+S.bg+(S.bg==='flat'?":"+S.bgc:"");
+}
+document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{
+ const t=$(b.dataset.copy).textContent,old=b.textContent;
+ try{await navigator.clipboard.writeText(t)}catch(e){const r=document.createRange();r.selectNodeContents($(b.dataset.copy));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand("copy")}
+ b.textContent="Copiado";setTimeout(()=>b.textContent=old,1200)});
+["subj","pose","extra","ovt"].forEach(i=>$(i).addEventListener("input",render));
+$("ovl").addEventListener("change",render);
+$("rst").onclick=()=>{Object.assign(S,DEF);["subj","pose","extra"].forEach(i=>$(i).value="");render()};
+$("rnd").onclick=()=>{["cam","lig","pal","com","mov","emo","sce","war"].forEach(k=>{const a=D[k];S[k]=a[Math.floor(Math.random()*a.length)][0]});render()};
+let saved=[];try{saved=JSON.parse(localStorage.getItem("zvls")||"[]")}catch(e){}
+function showSaved(){const b=$("saved");if(!saved.length){b.hidden=true;return}b.hidden=false;b.innerHTML="<b>Recetas guardadas</b><br>";saved.forEach((r,i)=>{const a=document.createElement("button");a.className="btn alt";a.style.margin="6px 6px 0 0";a.textContent=r.name;a.onclick=()=>{Object.assign(S,r.s);$("subj").value=r.subj;$("pose").value=r.pose;render()};b.appendChild(a)})}
+$("saveb").onclick=()=>{const n=prompt("Nombre de la receta");if(!n)return;saved.push({name:n,s:{...S},subj:$("subj").value,pose:$("pose").value});try{localStorage.setItem("zvls",JSON.stringify(saved))}catch(e){}showSaved()};
+const ESD={C01:'Cámara a la altura del pecho, de frente. Look de póster.',C02:'Cámara baja mirando arriba. El bailarín se ve grande y poderoso.',C03:'Cámara casi en el piso. Piernas y tenis enormes. Lo más épico.',C04:'Cámara inclinada. Horizonte torcido, mucho movimiento.',C05:'Cerca del rostro: solo cara y hombros.',C06:'Lejos y amplia: escenario enorme, persona pequeña.',L01:'Luz blanca dura al frente y luces rojas detrás. El look ZYRAC principal.',L02:'Igual que L01 pero con azul eléctrico.',L03:'Rojo y azul cruzados, ambiente de arena.',L04:'Luz cálida de bombillas. Ideal para backstage.',L05:'Todo oscuro con un solo foco desde arriba.',COMP01:'Cuerpo en diagonal: da energía.',COMP02:'Grupo en triángulo: estable y fuerte.',COMP03:'Bailarín al centro, como héroe.',COMP04:'Mucho negro vacío alrededor.',COMP05:'Piernas o manos enormes hacia la cámara.'};
+function ico(k,c){const A="<svg class='ico' viewBox='0 0 120 70' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'>",Z='</svg>';
+if(k==='cam'){const P={C01:[16,34,1,0],C02:[18,56,1,0],C03:[22,64,1,0],C04:[18,56,1,-14],C05:[58,36,1.3,0],C06:[6,30,.6,0]}[c],[cx,cy,s,t]=P,hy=66-44*s;return A+`<g transform='rotate(${t} 60 35)'><path d='M4 66H116' opacity='.4'/><g transform='translate(96 66) scale(${s}) translate(-96 -66)'><circle cx='96' cy='22' r='4'/><path d='M96 26V44M96 44L90 64M96 44L102 64M96 30L88 40M96 30L104 40'/></g><rect x='${cx-5}' y='${cy-3.5}' width='10' height='7' rx='1.5' stroke='#e1221b'/><path d='M${cx+5} ${cy}L96 ${hy}M${cx+5} ${cy}L96 64' stroke='#e1221b' stroke-dasharray='3 3'/></g>`+Z}
+if(k==='lig'){const L={L01:[[22,54,'#fff'],[28,8,'#e1221b'],[92,8,'#e1221b']],L02:[[22,54,'#fff'],[28,8,'#2f6bff'],[92,8,'#2f6bff']],L03:[[22,54,'#fff'],[24,10,'#e1221b'],[96,10,'#2f6bff'],[100,36,'#2f6bff'],[20,34,'#e1221b']],L04:[[30,10,'#ffb347'],[60,6,'#ffb347'],[90,10,'#ffb347'],[100,40,'#ffb347'],[20,40,'#ffb347']],L05:[[60,8,'#fff']]}[c];return A+L.map(l=>`<path d='M${l[0]} ${l[1]}L60 34' stroke='${l[2]}' opacity='.45'/><circle cx='${l[0]}' cy='${l[1]}' r='4' fill='${l[2]}' stroke='none'/>`).join('')+`<circle cx='60' cy='34' r='7'/><path d='M54 68H66L60 58Z'/>`+Z}
+if(k==='com'){const F={COMP01:"<circle cx='84' cy='22' r='4'/><path d='M84 26L36 50M60 38L50 30M60 38L72 50'/>",COMP02:"<path d='M60 12L30 54H90Z'/><circle cx='60' cy='12' r='4'/><circle cx='30' cy='54' r='4'/><circle cx='90' cy='54' r='4'/>",COMP03:"<circle cx='60' cy='22' r='6'/><path d='M60 28V54M60 34L48 44M60 34L72 44'/>",COMP04:"<circle cx='30' cy='34' r='3'/><path d='M30 37V52' /><rect x='50' y='10' width='55' height='50' stroke-dasharray='3 3' opacity='.4'/>",COMP05:"<ellipse cx='60' cy='56' rx='28' ry='8'/><circle cx='60' cy='16' r='4'/><path d='M60 20L40 50M60 20L80 50'/>"}[c];return A+"<rect x='10' y='4' width='100' height='62' opacity='.4'/>"+F+Z}
+if(k==='pal'){const C={P01:['#0a0a0b','#fff','#e1221b'],P02:['#0a0a0b','#2f6bff','#fff'],P03:['#0a0a0b','#222','#e1221b'],P04:['#fff','#e1221b','#0a0a0b']}[c];return A+C.map((x,i)=>`<rect x='${12+i*34}' y='14' width='30' height='42' rx='3' fill='${x}' stroke='#888'/>`).join('')+Z}
+return ''}
+const POSES=[
+['Power stance','Hip hop','De pie, piernas abiertas, brazos sueltos. La pose base de actitud.','standing in a wide low power stance, knees bent, arms loose, chin slightly down, intense stare','C02','hip hop dancer power stance wide legs low angle','M30 17L30 34M30 34L18 54M30 34L42 54M30 22L16 32M30 22L44 32',[[30,12,5]]],
+['Freeze en una mano','Breaking','Apoyado sobre una mano, piernas abiertas hacia la cámara.','breakdance one-hand freeze, body balanced on one hand, legs open in a V toward the camera, other arm extended','C03','bgirl freeze airchair reference','M20 54L24 40M24 40L40 28M40 28L52 14M40 28L52 34',[[22,33,4.5]]],
+['Windmill','Breaking','Giro en el piso con piernas en el aire.','breakdance windmill, shoulders on the floor, legs spinning in the air, motion frozen','C03','breakdance windmill photography','M26 46L38 38M38 38L50 18M38 38L54 28M28 44L16 54M28 44L36 54',[[24,48,4.5]]],
+['Salto abierto','Hip hop','En el aire con brazos y piernas abiertos.','mid-air star jump, arms and legs wide open, hair and clothes flying, peak of the jump','C02','dancer mid air jump stage photography','M30 21L30 36M30 36L14 28M30 36L46 28M30 24L12 14M30 24L48 14',[[30,16,5]]],
+['Squat bajo','Dancehall','Muy bajo, rodillas abiertas, actitud de calle.','deep wide squat, knees open, torso leaning forward, one hand near sunglasses, dancehall attitude','C02','dancehall dancer low squat pose','M26 27L30 38M30 38L16 44L18 56M30 38L44 44L42 56M26 30L14 38M27 30L38 36',[[26,22,5]]],
+['En cuclillas','Retrato','Sentado bajo, codos en las rodillas, mirada a cámara.','crouching low, elbows on knees, looking straight into the camera with calm dominance','C01','dancer crouching portrait streetwear','M24 29L28 42M28 42L44 42L44 56M28 42L36 56M24 32L40 38',[[24,24,5]]],
+['Locking point','Locking','Un brazo señalando arriba, el otro atrás, zancada.','locking dancer in a lunge, one arm pointing up sharply, other arm back, playful but fierce expression','C04','locking dance pose point lunge','M30 17L30 34M30 34L14 44L10 56M30 34L46 44L50 56M30 22L46 10M30 22L14 30',[[30,12,5]]],
+['Grupo triángulo','Grupo','Tres o más bailarines en triángulo, el de adelante agachado.','dance crew in a triangle formation, front dancer crouching, others standing behind in staggered rows, all staring at camera','C02','dance crew group photo triangle formation','M30 15L30 30M16 33L16 46M44 33L44 46M30 30L20 50M30 30L40 50',[[30,11,4],[16,29,4],[44,29,4]]],
+['Espalda con espalda','Dúo','Dos bailarines espalda con espalda, brazos cruzados.','two dancers standing back to back, arms crossed, looking in different directions, powerful duo pose','C01','back to back duo pose streetwear photography','M24 19L24 40M36 19L36 40M24 40L20 56M24 40L28 56M36 40L32 56M36 40L40 56M24 24L14 34M36 24L46 34',[[24,14,4.5],[36,14,4.5]]],
+['Retrato 3/4','Retrato','Rostro cerca, mano en las gafas, luz de borde roja.','close portrait, face turned three quarters, hand touching sunglasses, red rim light on hair, chin down','C05','dancer portrait bandana sunglasses low angle','M10 52L18 40H42L50 52M42 40L38 26',[[30,24,9]]],
+['Footwork','Breaking','Manos en el piso, piernas cruzando rápido.','breakdance footwork, hands on floor, legs crossing fast, low to the ground','C03','breakdance footwork 6 step photography','M16 33L30 40M16 33L14 52M20 35L24 52M30 40L48 36L54 50M30 40L44 48L52 54',[[14,30,4.5]]],
+['Preparación','Backstage','De pie, vendando la muñeca, mirada baja concentrada.','standing backstage wrapping a wrist, head slightly down, focused, warm bulb light','C01','dancer backstage preparing portrait','M30 17L30 36M30 36L24 56M30 36L36 56M30 22L22 34L34 32',[[30,12,5]]],
+['Aterrizaje','Afrobeat','Rodillas flexionadas y brazos abiertos tras el impacto.','afrobeat landing, knees bent, one arm wide, torso twisted, braids in motion','C03','afrobeats dancer landing pose stage','M28 21L34 36M34 36L18 42L14 54M34 36L48 48L52 56M28 24L12 20M28 24L44 16',[[28,16,5]]],
+['Caminando a cámara','Hero','Caminata segura de frente, brazos sueltos.','confident walk toward the camera, arms swinging, smoke behind, stage lights flaring','C01','dancer walking toward camera cinematic stage','M30 17L30 36M30 36L22 56M30 36L38 56M30 22L20 36M30 22L40 34',[[30,12,5]]]];
+function buildPoses(){const g=$('pg');POSES.forEach((p,pi)=>{const b=document.createElement('button');b.className='pb';b.setAttribute('aria-pressed','false');b.innerHTML=`<svg viewBox='0 0 60 60' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='${p[6]}'/>${p[7].map(h=>`<circle cx='${h[0]}' cy='${h[1]}' r='${h[2]}' fill='currentColor'/>`).join('')}<path d='M2 58H58' stroke-width='1' opacity='.4'/></svg>${p[0]}<i>${p[1]} · ${p[4]}</i>`;b.onclick=()=>{S.pi=pi;$('pose').value=p[3];S.cam=p[4];document.querySelectorAll('.pb').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');const q=encodeURIComponent(p[5]);$('pinfo').innerHTML=`<b>${p[0]}:</b> ${p[2]} Cámara sugerida ${p[4]}. Referencias reales: <a href='https://www.pinterest.com/search/pins/?q=${q}' target='_blank' rel='noopener'>Pinterest</a> · <a href='https://www.google.com/search?tbm=isch&q=${q}' target='_blank' rel='noopener'>Google Imágenes</a> · <a href='https://www.youtube.com/results?search_query=${q}' target='_blank' rel='noopener'>YouTube</a>`;render()};g.appendChild(b)})}
+$('pref').addEventListener('change',render);
+
+D.wm=[['keep','Mantener ropa'],['recolor','Mismo corte, colores ZYRAC'],['new','Cambiar ropa']];ids.wm='wm';DEF.wm='new';S.wm='new';
+Object.assign(ESD,{T2I:'Generas todo desde cero solo con texto.',REF:'Subes la foto de tu bailarín y la IA conserva su cara y cuerpo.',keep:'Conserva la ropa real de la foto, sin cambios.',recolor:'Mismas prendas, pero en negro, blanco y rojo.',new:'Eliges un outfit ZYRAC nuevo.',W01:'Chaqueta varsity, cargo, tenis blancos, bandana roja.',W02:'Todo negro, nylon y gorra.',W03:'Blanco con detalles rojos.',W04:'Crop top, cargo baggy y aros.'});
+const _i=ico;ico=function(k,c){
+const A="<svg class='ico' viewBox='0 0 120 70' fill='none' stroke='#8a8a92' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'>",Z='</svg>';
+const J=(b,s,x='')=>`<path d='M42 14L52 10Q60 16 68 10L78 14V60H42Z' fill='${b}'/><path d='M42 14L26 26L34 38L42 32ZM78 14L94 26L86 38L78 32Z' fill='${s}'/>${x}`;
+if(k==='mode')return A+(c==='T2I'?"<path d='M30 22H90M30 34H78M30 46H62'/><path d='M92 40L96 48L104 50L96 52L92 60L88 52L80 50L88 48Z' fill='#e1221b' stroke='none'/>":"<rect x='34' y='8' width='52' height='54' rx='3'/><circle cx='60' cy='28' r='8'/><path d='M44 58Q60 38 76 58'/>")+Z;
+if(k==='wm')return A+J('#3a3a40','#3a3a40',{keep:"<path d='M52 36L58 43L70 28' stroke='#fff' stroke-width='3'/>",recolor:"<circle cx='50' cy='50' r='4' fill='#111'/><circle cx='60' cy='50' r='4' fill='#fff'/><circle cx='70' cy='50' r='4' fill='#e1221b'/>",new:"<path d='M60 28V48M50 38H70' stroke='#e1221b' stroke-width='3'/>"}[c])+Z;
+if(k==='war')return A+{W01:J('#f4f2ef','#111',"<circle cx='60' cy='15' r='3' fill='#e1221b' stroke='none'/>"),W02:J('#1b1b1f','#1b1b1f'),W03:J('#fff','#fff',"<path d='M30 28L38 36M90 28L82 36' stroke='#e1221b' stroke-width='3'/>"),W04:"<path d='M44 18H76L72 38H48Z' fill='#111'/><path d='M46 38H74L78 62H42Z' fill='#2a2a2e'/>"}[c]+Z;
+return _i(k,c)};
+function ui(){const R=S.mode==='REF';if(R&&!ui.s){S.wm='keep';ui.s=1}if(!R){ui.s=0;S.wm='new'}
+document.querySelectorAll('input[name=wm]').forEach(i=>{const off=i.value!=='new'&&!R;i.disabled=off;i.parentElement.style.opacity=off?.4:1});
+$('warbox').hidden=S.wm!=='new';$('scebox').hidden=S.bg!=='scene';$('bgbox').hidden=S.bg!=='flat';preview()}
+function preview(){const pv=$('pv'),L={L01:['#e1221b'],L02:['#2f6bff'],L03:['#e1221b','#2f6bff'],L04:['#ffb347'],L05:['#ffffff'],L06:['#9db8ff'],L07:['#e1221b']}[S.lig],c=L[0],c2=L[1]||c;
+pv.style.aspectRatio=S.asp.replace(':','/');
+pv.style.background=S.lig==='L05'?'radial-gradient(ellipse at 50% -10%,#fff7,transparent 60%),#0a0a0b':`radial-gradient(ellipse at 10% 10%,${c}99,transparent 55%),radial-gradient(ellipse at 95% 15%,${c2}99,transparent 55%),radial-gradient(ellipse at 50% 110%,${c}44,transparent 50%),#0a0a0b`;
+const p=POSES[S.pi||0],tf={C01:'scale(.95)',C02:'scale(1.1)',C03:'scale(1.3)',C04:'rotate(-9deg) scale(1.1)',C05:'scale(1.7) translateY(14%)',C06:'scale(.6)',C07:'scale(2.2) translateY(18%)',C08:'scale(1.5) translateY(8%)',C09:'scale(2.6) translateY(24%)',C10:'skewX(-6deg)',C11:'scale(.8) rotate(8deg)',C12:'scale(.75)'}[S.cam],wc={W01:'#f4f2ef',W02:'#9a9aa2',W03:'#fff',W04:'#d7d7dc'}[S.war]||'#f4f2ef',keep=S.mode==='REF'&&S.wm==='keep',rec=S.mode==='REF'&&S.wm==='recolor';
+if(S.bg==='flat')pv.style.background=g('bgc',S.bgc)[3];if(S.bg==='cut')pv.style.background='repeating-conic-gradient(#555 0 25%,#333 0 50%) 0 0/16px 16px';$('pvs').innerHTML=`<g style='transform-origin:30px 58px;transform:${tf};filter:drop-shadow(0 0 3px ${c})'><path d='${p[6]}' fill='none' stroke='${keep?'#cfcfd4':rec?'#e1221b':wc}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' ${keep?"stroke-dasharray='4 3'":''}/>${p[7].map(h=>`<circle cx='${h[0]}' cy='${h[1]}' r='${h[2]}' fill='#e9c9a8'/>`).join('')}</g>`;
+$('pvt').innerHTML=`${p[0]}<small>${g('cam',S.cam)[1]} · ${g('lig',S.lig)[1]} · ${keep?'Ropa original':rec?'Colores ZYRAC':g('war',S.war)[1]}</small>`}
+const fb=document.createElement('button');fb.className='btn fab';fb.textContent='Ver prompt';fb.onclick=()=>document.querySelector('aside').scrollIntoView({behavior:'smooth'});document.body.appendChild(fb);
+D.cam.push(['C07','Close-up bajo','extreme close-up portrait from a low angle, 28mm wide lens shot very close, slight perspective distortion, face and shoulders fill the frame, sharp eyes'],['C08','Plano medio','medium shot from the waist up, 35mm lens, slightly low angle, dynamic attitude'],['C09','Detalle','detail shot, 50mm lens, hands wrists or white sneakers filling the frame, very shallow depth of field'],['C10','Perfil 3/4','side three-quarter profile shot, 35mm lens, subject turned partly away, face edged by rim light'],['C11','Cenital','high-angle top-down shot, 24mm lens, dancer on the stage floor, red light reflections on the floor'],['C12','Grupo hero','group hero shot, low angle, 28mm lens, crew staggered in rows, front dancers crouching']);
+D.lig.push(['L06','Warehouse frío','cold fluorescent tube lights overhead, industrial warehouse, medium contrast, cool tones with red accents'],['L07','Red wash','monochrome saturated red wash, red smoke, black silhouettes, grungy red texture']);
+D.com.push(['COMP06','Marco apretado','tight crop, face fills the frame'],['COMP07','Escalonado','staggered rows of dancers at different depths']);
+D.war.push(['W05','Tank + beanie','black sleeveless tank top, black wristbands, black beanie, baggy cargo pants, visible arm tattoos'],['W06','Bandana + gafas','white paisley bandana on the head, black cat-eye sunglasses, large hoop earrings, red bandana scarf, white and black colorblock jacket'],['W07','Windbreaker colorblock','black white and red colorblock windbreaker, baggy cargo pants, white sneakers'],['W08','Bucket hat','black bucket hat, dark sunglasses, black jacket with red print, baggy pants'],['W09','Cargo blanco','white baggy cargo pants, black crop top, black belt, white sneakers'],['W10','Gorra + tee','black cap, black oversized tee, black cargo pants, white sneakers'],['W11','Acento azul','white oversized jacket, blue bandana, black baggy cargo pants, white sneakers'],['W12','Uniforme crew','matching crew uniforms in black white and red, same jackets and cargo pants']);
+Object.assign(ESD,{C07:'Muy cerca y desde abajo: cara y hombros llenan el cuadro.',C08:'De la cintura hacia arriba, con actitud.',C09:'Solo manos, muñecas o tenis.',C10:'De lado, tres cuartos, medio de espaldas.',C11:'Desde arriba, bailarín en el piso.',C12:'Para grupos: filas escalonadas y los de adelante agachados.',L06:'Tubos fríos de bodega, tono industrial.',L07:'Todo bañado en rojo con humo, estilo póster.',COMP06:'La cara ocupa todo el cuadro.',COMP07:'Filas a distinta profundidad.',W05:'Tank negro, beanie, tatuajes visibles.',W06:'Bandana blanca, gafas cat-eye, aros.',W07:'Cortavientos negro, blanco y rojo.',W08:'Bucket hat, gafas y chaqueta negra.',W09:'Pantalón cargo blanco y crop top.',W10:'Gorra, tee oversized y cargo negro.',W11:'Chaqueta blanca con bandana azul.',W12:'Todos con el mismo uniforme.'});
+POSES.push(['Close-up bajo','Retrato','Cara cerca desde abajo, bandana y gafas.','extreme close-up low angle portrait, bandana, sunglasses, large hoop earrings, red scarf, head slightly tilted, red rim light','C07','dancer close up portrait bandana sunglasses','M8 56L16 42H44L52 56M24 24H36',[[30,24,10]]],['Detalle de manos','Detalle','Vendando la muñeca, tatuajes, luz cálida.','close detail of hands wrapping a wristband, tattooed forearm, warm bulb light, shallow depth of field','C09','hands wrapping wrist tattoo backstage','M10 40L28 34L40 38M12 48L30 44L44 46',[]],['Plano medio','Medio','Brazos cruzados, mirada fija, de la cintura arriba.','medium waist-up shot, arms crossed, chin down, direct stare, sleeveless top','C08','dancer medium shot arms crossed stare','M30 20V50M30 28L16 40L36 38M30 28L44 40L24 38',[[30,13,6]]],['Kick lateral','Hip hop','Pierna extendida al lado, brazos abiertos en el aire.','high side kick, one leg extended horizontally, arms open, mid air, baggy pants flowing','C04','dancer side kick mid air stage','M26 22L28 40M28 40L8 34M28 40L48 52M26 26L10 18M26 26L44 14',[[26,16,5]]],['Vista cenital','Suelo','Desde arriba, bailarín con brazos y piernas abiertos.','high-angle top-down view of a dancer on the stage floor, limbs spread, red light reflections on the floor','C11','top down dancer floor pose','M30 20V40M30 28L10 22M30 28L50 22M30 40L16 56M30 40L44 56',[[30,15,5]]],['Fila en sync','Grupo','Tres bailarines en diagonal con la misma pose.','three dancers in sync in a staggered diagonal line, same crouched pose, all looking at the camera','C12','dance crew synchronized pose diagonal','M12 16V40M30 22V46M48 28V52M12 40L6 54M12 40L18 54M30 46L24 56M30 46L36 56M48 52L44 58',[[12,10,4],[30,16,4],[48,22,4]]]);
+const _k=ico;ico=function(k,c){
+const A="<svg class='ico' viewBox='0 0 120 70' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'>",Z='</svg>';
+const N={C07:[40,50,1.5],C08:[44,38,1.15],C09:[56,60,1.8],C10:[40,36,1],C11:[20,8,1],C12:[14,58,.8]}[c];
+if(k==='cam'&&N){const [cx,cy,s]=N,hy=66-44*s;return A+`<path d='M4 66H116' opacity='.4'/><g transform='translate(96 66) scale(${s}) translate(-96 -66)'><circle cx='96' cy='22' r='4'/><path d='M96 26V44M96 44L90 64M96 44L102 64M96 30L88 40M96 30L104 40'/></g><rect x='${cx-5}' y='${cy-3.5}' width='10' height='7' rx='1.5' stroke='#e1221b'/><path d='M${cx+5} ${cy}L96 ${hy}M${cx+5} ${cy}L96 64' stroke='#e1221b' stroke-dasharray='3 3'/>`+Z}
+if(k==='lig'&&c>'L05'){const L={L06:[[30,8,'#9db8ff'],[60,6,'#9db8ff'],[90,8,'#9db8ff']],L07:[[20,10,'#e1221b'],[100,10,'#e1221b'],[20,50,'#e1221b'],[100,50,'#e1221b'],[60,8,'#e1221b']]}[c];return A+L.map(l=>`<path d='M${l[0]} ${l[1]}L60 34' stroke='${l[2]}' opacity='.45'/><circle cx='${l[0]}' cy='${l[1]}' r='4' fill='${l[2]}' stroke='none'/>`).join('')+"<circle cx='60' cy='34' r='7'/><path d='M54 68H66L60 58Z'/>"+Z}
+if(k==='com'&&c>'COMP05'){return A+"<rect x='10' y='4' width='100' height='62' opacity='.4'/>"+(c==='COMP06'?"<circle cx='60' cy='36' r='26'/><path d='M48 32H72' stroke-width='3'/>":"<circle cx='36' cy='18' r='3'/><path d='M36 21V34'/><circle cx='60' cy='26' r='3'/><path d='M60 29V44'/><circle cx='84' cy='34' r='3'/><path d='M84 37V54'/>")+Z}
+if(k==='war'&&c>'W04'){const J=(b,s,x='')=>`<path d='M42 14L52 10Q60 16 68 10L78 14V60H42Z' fill='${b}'/><path d='M42 14L26 26L34 38L42 32ZM78 14L94 26L86 38L78 32Z' fill='${s}'/>${x}`,W={W05:"<path d='M46 10H52Q60 24 68 10H74L76 62H44Z' fill='#111'/><rect x='80' y='40' width='8' height='6' fill='#fff'/>",W06:"<circle cx='60' cy='34' r='16' fill='#e9c9a8'/><path d='M44 30Q60 12 76 30Z' fill='#fff'/><rect x='48' y='32' width='24' height='6' rx='3' fill='#000'/><path d='M52 46L60 58L68 46Z' fill='#e1221b'/>",W07:J('#111','#f4f2ef',"<path d='M60 14V60' stroke='#e1221b' stroke-width='3'/>"),W08:"<path d='M40 32Q60 2 80 32Z' fill='#111'/><path d='M34 32H86' stroke-width='4'/><rect x='46' y='40' width='28' height='6' rx='3' fill='#000'/>",W09:"<path d='M44 12H76L80 62H62L60 34L58 62H40Z' fill='#f4f2ef'/>",W10:J('#111','#111',"<path d='M48 8Q60 -4 72 8Z' fill='#111'/>"),W11:J('#f4f2ef','#f4f2ef',"<circle cx='60' cy='15' r='3.5' fill='#2f6bff' stroke='none'/>"),W12:"<circle cx='30' cy='20' r='6' fill='#111'/><path d='M22 30H38V60H22Z' fill='#111'/><circle cx='60' cy='20' r='6' fill='#f4f2ef'/><path d='M52 30H68V60H52Z' fill='#f4f2ef'/><circle cx='90' cy='20' r='6' fill='#e1221b'/><path d='M82 30H98V60H82Z' fill='#e1221b'/>"}[c];return A+W+Z}
+return _k(k,c)};
+const ACC=[['Bandana roja','red bandana tied around the neck'],['Bandana blanca','white paisley bandana on the head'],['Gafas de sol','black sunglasses'],['Gafas cat-eye','black cat-eye sunglasses'],['Aros','large hoop earrings'],['Gorra','black cap'],['Beanie','black beanie'],['Bucket hat','black bucket hat'],['Muñequeras','black wristbands'],['Cadena','silver chain necklace'],['Trenzas largas','long braids in motion'],['Tatuajes','visible arm tattoos'],['Tenis blancos','white chunky sneakers']];
+const PRE=[['Stage Presence','C02','L01','S02','W01',0],['The Company','C12','L01','S02','W02',7],['Full Impact','C04','L02','S01','W11',17],['Dancehall','C02','L01','S02','W06',4],['Backstage','C08','L04','S03','W05',15],['In Sync','C12','L01','S04','W02',19],['Hip Hop','C03','L02','S02','W02',10],['Spotlight','C07','L05','S02','W06',14],['Afrobeat','C02','L01','S02','W09',12],['Live Motion','C03','L01','S01','W11',3],['The Rehearsal','C06','L03','S04','W05',7],['Zyrac Originals','C01','L01','S05','W01',8]];
+D.bg=[['scene','Escenario completo'],['flat','Fondo plano'],['cut','Sin fondo (recorte)']];D.bgc=[['BK','Negro','pure black','#0a0a0b'],['BR','Rojo ZYRAC','saturated ZYRAC red','#c8141a'],['BW','Blanco','pure white','#f4f2ef'],['BG','Gris','medium neutral gray','#6b6b72'],['BB','Azul','deep electric blue','#1d3fa8'],['BV','Verde recorte','pure chroma green','#00b140']];ids.bg='bg';ids.bgc='bgc';DEF.bg='scene';DEF.bgc='BK';S.bg='scene';S.bgc='BK';
+Object.assign(ESD,{scene:'Luces de concierto, humo y ambiente completo.',flat:'Estudio con un solo color liso detrás.',cut:'Solo el bailarín, listo para quitar el fondo.'});
+g('cam','C05')[1]='Retrato clásico';g('cam','C07')[1]='Retrato dramático';g('cam','C08')[1]='Plano medio';ESD.C05='Retrato limpio: de frente, a la altura de los ojos, fondo suave.';ESD.C07='Retrato dramático: muy cerca y desde abajo, look póster ZYRAC.';
+const _b=ico;ico=function(k,c){const A="<svg class='ico' viewBox='0 0 120 70' fill='none' stroke='#8a8a92' stroke-width='1.6' stroke-linecap='round'>",Z='</svg>',f="<circle cx='60' cy='20' r='5' fill='#e9c9a8' stroke='none'/><path d='M60 25V44M60 28L50 38M60 28L70 38M60 44L52 60M60 44L68 60' stroke='#f4f2ef'/>";
+if(k==='bg')return A+({scene:"<rect x='6' y='4' width='108' height='62' fill='#2a0a0c'/><path d='M20 4L8 66M100 4L112 66' stroke='#e1221b' stroke-width='4'/>",flat:"<rect x='6' y='4' width='108' height='62' fill='#c8141a'/>",cut:"<rect x='6' y='4' width='108' height='62' fill='#444'/><path d='M6 4H30V16H6ZM54 4H78V16H54ZM30 16H54V28H30ZM78 16H102V28H78ZM6 28H30V40H6ZM54 28H78V40H54ZM30 40H54V52H30ZM78 40H102V52H78ZM6 52H30V64H6ZM54 52H78V64H54Z' fill='#666' stroke='none'/>"}[c])+f+Z;
+if(k==='bgc')return A+`<rect x='6' y='4' width='108' height='62' rx='4' fill='${g('bgc',c)[3]}'/>`+f+Z;
+return _b(k,c)};
+build();buildPoses();
+const cg=$('cam');cg.insertAdjacentHTML('beforebegin',"<p class='hint'>Primero decide qué quieres mostrar (cuerpo completo, retrato, detalle o grupo) y luego elige el ángulo.</p>");
+[['Cuerpo completo · acción','C01 C02 C03 C04 C10 C11'],['Retrato · cara y hombros','C05 C07 C08'],['Detalle · manos y tenis','C09'],['Grupo y escenario','C12 C06']].forEach(([t,cs])=>{const h=document.createElement('div');h.className='gh';h.textContent=t;cg.appendChild(h);cs.split(' ').forEach(c=>cg.appendChild(cg.querySelector(`input[value=${c}]`).parentElement))});
+const sty=['Todas',...new Set(POSES.map(p=>p[1]))],pf=document.createElement('div');pf.className='pf';sty.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s;b.setAttribute('aria-pressed',i===0);b.onclick=()=>{pf.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelectorAll('.pb').forEach((x,j)=>x.hidden=i>0&&POSES[j][1]!==s)};pf.appendChild(b)});$('pg').before(pf);
+ACC.forEach(a=>{const l=document.createElement('label');l.className='chip';l.innerHTML=`<input type='checkbox' class='acc' data-en='${a[1]}'><span>${a[0]}</span>`;l.firstChild.onchange=render;$('accs').appendChild(l)});
+PRE.forEach((r,i)=>{const b=document.createElement('button');b.innerHTML=`<i>${String(i+1).padStart(2,'0')}</i>${r[0]}`;b.onclick=()=>{Object.assign(S,{cam:r[1],lig:r[2],sce:r[3],war:r[4],pi:r[5]});if(i===11)S.pal='P04';$('pose').value=POSES[r[5]][3];$('ovt').value=r[0].toUpperCase();document.querySelectorAll('.pb').forEach((x,j)=>x.setAttribute('aria-pressed',j===r[5]));render()};$('ps').appendChild(b)});
+const qn=document.createElement('nav');qn.className='qn';document.querySelectorAll('#ctl section.g').forEach(s=>{const b=document.createElement('button');b.textContent=s.querySelector('h2').textContent;b.onclick=()=>s.scrollIntoView({behavior:'smooth',block:'start'});qn.appendChild(b)});document.querySelector('main').before(qn);
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=e.dataset.i.split(',').map(x=>ico(...x.split(':'))).join(''));
+const gd=$('gd'),gb=document.createElement('button');gb.className='btn gfab';gb.textContent='📷 Guía';const tg=v=>{gd.hidden=v===undefined?!gd.hidden:!v};gb.onclick=()=>tg();$('gx').onclick=()=>tg(false);gd.onclick=e=>{if(e.target===gd)tg(false)};document.addEventListener('keydown',e=>{if(e.key==='Escape')tg(false)});document.body.appendChild(gb);
+render();showSaved();
+</script>
+</body>
+</html>
